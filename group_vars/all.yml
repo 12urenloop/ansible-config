@@ -1,0 +1,12 @@
+---
+users:
+  francis:
+    ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO3Q+5FksBvYXJQde1onrWgt/IPD/x2hopsFc04F1jLa fklinck@fkmachine
+    admin: true
+  flynn:
+    ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGhg7F1y22LxKb1XHakXI5q8EqVoemXMlQFGc4bORXUU janle@ROG-ARCH
+    admin: true
+  jan:
+    ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINNS5sbll0vXcSxrpSYC3NAFJbzhMM3UYtHiQHnDaw1n maxime@maxime-xps13
+  redfast00:
+    ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGgQgerwZXVnVBCfwtWW6m0wg4P4CsrQ6DkjJ61oC6LJ redfast00@arch

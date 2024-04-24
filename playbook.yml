@@ -1,0 +1,40 @@
+---
+- hosts: client
+  strategy: free  # speedup trick
+  become: true
+  vars:
+    telraam_db_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          65373132306566653332643830363766363564333230653965306239663764633365383166353638
+          3239303466306266613739633362326131646566626461330a383764336662313635323536646130
+          34393739333161636636396436356137396138623038356263373831313430333233303630336563
+          3863653366373432380a623637653631393834396563396665396234663238616361303462343531
+          33656631343539653836313934383433663162336461353564666362323833613664386234363030
+          3462653366383566363964306563333163613636323433333139
+  tasks:
+    - name: Set up authorized keys
+      ansible.posix.authorized_key:
+        user: zeus
+        state: present
+        key: '{{ item.value.ssh_key }}'
+      loop: "{{ users | dict2items }}"
+      tags: ['users']
+    - name: Set up authorized keys
+      ansible.posix.authorized_key:
+        user: root
+        state: present
+        key: '{{ item.value.ssh_key }}'
+      loop: "{{ users | dict2items }}"
+      tags: ['users']
+      when: item.value.admin is defined and item.value.admin
+    # First remove the existing one.
+    # - name: Deploy Prometheus node exporter
+    #   import_role:
+    #     name: prometheus.prometheus.node_exporter # 0.0.0.0:9100
+    #   tags: ['exporters']
+    - name: Deploy Prometheus postgres exporter
+      import_role:
+        name: prometheus.prometheus.postgres_exporter # 0.0.0.0:9187
+      vars:
+        postgres_exporter_name: "postgresql://telraam_user:{{ telraam_db_password }}@127.0.0.1/telraam_dev"
+      tags: ['exporters']
