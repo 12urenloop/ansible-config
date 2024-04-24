@@ -1,0 +1,12 @@
+---
+coredns_version: "1.11.1"
+
+coredns_archs:
+  x86_64:  amd64
+  amd64:   amd64
+  aarch64: arm64
+  arm64:   arm64
+
+coredns_os: "{{ ansible_facts.system | lower }}"
+coredns_arch: "{{ coredns_archs[ansible_facts.architecture] }}"
+# coredns_release_name: "{{ 'yq_' + cli_tools_yq_os + '_' + cli_tools_yq_arch }}"

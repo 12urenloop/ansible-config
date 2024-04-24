@@ -1,0 +1,28 @@
+$TTL 360
+$ORIGIN lan.
+@                    IN  SOA   ns.lan. admin.lan. (
+                     2024042401 ; serial
+		    1d ; refresh
+		    2h ; retry
+		    4w ; expire
+		    1h ; nxdomain ttl
+		    )
+
+	IN	NS	ns.lan.
+
+ns	IN	A	{{ ansible_default_ipv4.address }}
+dns	IN	A	{{ ansible_default_ipv4.address }}
+
+{% for host in hosts %}
+{{ host.dns }} IN A {{ host.ip }}
+{% endfor %}
+
+; https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/
+
+{% for proto_name, proto in services.items() %}
+{% for service_name, service in proto.items() %}
+{% for target in service.targets %}
+_{{service_name}}._{{proto_name}} 600 IN SRV 10 5 {{service.port}} {{target}}
+{% endfor %}
+{% endfor %}
+{% endfor %}

@@ -1,0 +1,14 @@
+lan:53	{
+	file /etc/coredns/lan.zone
+	log
+	errors
+	prometheus 0.0.0.0:9153 # FIXME: restrict
+}
+
+.:53	{
+	forward . 1.1.1.1
+	cache
+	log
+	errors
+	prometheus 0.0.0.0:9153 # FIXME: restrict
+}

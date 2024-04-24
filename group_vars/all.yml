@@ -10,3 +10,8 @@ users:
     ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINNS5sbll0vXcSxrpSYC3NAFJbzhMM3UYtHiQHnDaw1n maxime@maxime-xps13
   redfast00:
     ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGgQgerwZXVnVBCfwtWW6m0wg4P4CsrQ6DkjJ61oC6LJ redfast00@arch
+
+resolv_domain: lan
+resolv_nameserver:
+  - 172.12.50.22
+  - 172.12.50.1

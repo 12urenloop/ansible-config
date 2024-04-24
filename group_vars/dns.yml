@@ -1,0 +1,41 @@
+hosts:
+  - {dns: ronny01, ip: 172.12.50.101}
+  - {dns: ronny02, ip: 172.12.50.102}
+  - {dns: ronny03, ip: 172.12.50.103}
+  - {dns: ronny04, ip: 172.12.50.104}
+  - {dns: ronny05, ip: 172.12.50.105}
+  - {dns: ronny06, ip: 172.12.50.106}
+  - {dns: ronny07, ip: 172.12.50.107}
+  - {dns: ronny08, ip: 172.12.50.108}
+
+  # Clients
+  - {dns: client1, ip: 172.12.50.21}
+  - {dns: client2, ip: 172.12.50.22}
+
+services:
+  tcp:
+    ronny:
+      port: 8000
+      targets:
+        - ronny01
+        - ronny02
+        - ronny03
+        - ronny04
+        - ronny05
+        - ronny06
+        - ronny07
+        - ronny08
+    postgres_exporter:
+      port: 9187
+      targets:
+        - ronny01
+        - ronny02
+        - ronny03
+        - ronny04
+        - ronny05
+        - ronny06
+        - ronny07
+        - ronny08
+        - client1
+        - client2
+        

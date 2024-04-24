@@ -1,0 +1,7 @@
+---
+- name: Configure the dns container
+  hosts: dns
+  become_user: root
+
+  roles:
+    - role: coredns

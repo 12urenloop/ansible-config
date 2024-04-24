@@ -1,0 +1,76 @@
+---
+- name: Install build dependencies
+  ansible.builtin.apt:
+    pkg:
+      - dpkg-dev
+      - debhelper
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Download the coredns deployment repo
+  ansible.builtin.git:
+    repo: 'https://github.com/coredns/deployment.git'
+    dest: /tmp/coredns-deployment
+    version: master
+
+- name: Set dpkg coredns distribution
+  command: lsb_release -sr
+  register: dpkg_coredns_distribution
+
+- name: Set coredns facts
+  set_fact:
+    coredns_deb_filename: "coredns_{{coredns_version}}-0~{{dpkg_coredns_distribution.stdout}}0_{{coredns_arch}}.deb"
+
+- name: Check if deb file exists
+  stat:
+    path: "/tmp/{{coredns_deb_filename}}"
+  register: coredns_deb_file_info
+
+- name: Build coredns
+  command:
+    cmd: "dpkg-buildpackage -us -uc -b  --target-arch {{coredns_arch}}"
+    chdir: /tmp/coredns-deployment
+  environment:
+    VERSION: "{{coredns_version}}"
+  when: not coredns_deb_file_info.stat.exists
+  register: coredns_build
+
+
+- name: Install coredns
+  command:
+    cmd: "dpkg -i {{coredns_deb_filename}}"
+    chdir: "/tmp"
+  when: coredns_build.changed
+
+# - name: Download and unarchive coredns binary
+#   ansible.builtin.unarchive:
+#     src: "https://github.com/coredns/coredns/releases/download/v{{coredns_version}}/coredns_{{coredns_version}}_linux_amd64.tgz"
+#     dest: /usr/local/bin
+#     remote_src: yes
+
+# - name: Create coredns /etc folder
+#   ansible.builtin.file:
+#     path: /etc/coredns
+#     owner: root
+#     group: root
+
+- name: Generate Corefile file
+  ansible.builtin.template:
+    src: Corefile.j2
+    dest: /etc/coredns/Corefile
+  tags: ['config']
+
+- name: Generate Zone file
+  ansible.builtin.template:
+    src: lan.zone.j2
+    dest: /etc/coredns/lan.zone
+  tags: ['config']
+
+- name: Reload (and enable) service
+  ansible.builtin.service:
+    name: coredns
+    enabled: true
+    state: reloaded
+    daemon_reload: true
+  tags: ['config']

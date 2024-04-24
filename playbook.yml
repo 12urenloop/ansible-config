@@ -1,4 +1,12 @@
 ---
+- hosts: all
+  become: true
+  tasks:
+    - name: Setup dns server
+      import_role:
+        name: resolv
+      tags: ['resolv']
+
 - hosts: client
   strategy: free  # speedup trick
   become: true
