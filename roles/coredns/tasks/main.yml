@@ -43,18 +43,6 @@
     chdir: "/tmp"
   when: coredns_build.changed
 
-# - name: Download and unarchive coredns binary
-#   ansible.builtin.unarchive:
-#     src: "https://github.com/coredns/coredns/releases/download/v{{coredns_version}}/coredns_{{coredns_version}}_linux_amd64.tgz"
-#     dest: /usr/local/bin
-#     remote_src: yes
-
-# - name: Create coredns /etc folder
-#   ansible.builtin.file:
-#     path: /etc/coredns
-#     owner: root
-#     group: root
-
 - name: Generate Corefile file
   ansible.builtin.template:
     src: Corefile.j2
