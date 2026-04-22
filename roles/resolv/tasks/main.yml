@@ -1,5 +1,4 @@
 ---
-
 - name: "setup resolv.conf"
   template:
     src: resolv.conf.j2

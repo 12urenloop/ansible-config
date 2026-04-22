@@ -1,0 +1,16 @@
+---
+- hosts: client
+  strategy: free  # speedup trick
+  become: true
+  vars_prompt:
+    - name: telraam_db_password
+  tasks:
+    # First remove the existing one.
+    - name: Deploy Prometheus node exporter
+      import_role:
+        name: prometheus.prometheus.node_exporter # 0.0.0.0:9100
+    - name: Deploy Prometheus postgres exporter
+      vars:
+        postgres_exporter_name: "postgresql://telraam_user:{{ telraam_db_password }}@127.0.0.1/telraam_dev"
+      import_role:
+        name: prometheus.prometheus.postgres_exporter # 0.0.0.0:9187

@@ -1,0 +1,81 @@
+---
+- hosts: clients
+  tasks:
+    - name: Add the zeus user to the sudo group
+      become: true
+      ansible.builtin.user:
+        name: zeus
+        groups: sudo
+        append: true
+    - name: Install apt packages
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - curl
+          - default-jdk-headless
+          - docker-compose
+          - git
+          - htop
+          - iperf3
+          - p7zip-full
+          - podman
+          - podman-docker
+          - ranger
+          - tmux
+          - vim
+          - vim-gui-common
+    - name: Add defaults and aliases to .bashrc
+      ansible.builtin.blockinfile:
+        path: /home/zeus/.bashrc
+        block: |
+          export EDITOR=vim
+          export PAGER=less
+
+          export HISTSIZE=1000000000
+          export HISTFILESIZE=1000000000
+          alias nohist="export HISTFILE=/dev/null"
+
+          alias ls="ls --color=tty"
+          alias la="ls -lA"
+          alias ll="ls -lh"
+          alias l="ls -lAh"
+          eval "$(dircolors)"
+
+          alias G="grep --color=always"
+          alias L="less -S -i"
+
+          alias s="sudo"
+          alias se="sudo -e"
+
+          alias v="vim"
+          alias sv="sudo vim"
+
+          alias r="ranger"
+          alias sr="sudo ranger"
+
+          alias sctl="sudo systemctl"
+          alias uctl="systemctl --user"
+
+          alias d="docker"
+          alias dc="docker compose"
+          alias dcps="docker compose ps -a | less -S"
+
+          alias p="podman"
+          alias pc="podman compose"
+          alias pcps="podman compose ps -a | less -S"
+        state: present
+        create: true
+    - name: Add defaults to .vimrc
+      ansible.builtin.blockinfile:
+        path: /home/zeus/.vimrc
+        marker: '" {mark} ANSIBLE MANAGED BLOCK'
+        block: |
+          set nu
+          set bri lbr
+          set ts=4 sw=4 et
+          set ic sc
+          set mouse=a
+          command W w !sudo tee %
+        state: present
+        create: true

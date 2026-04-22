@@ -1,0 +1,17 @@
+---
+- name: Install the coredns container on client2
+  hosts: dns_server
+  tasks:
+    - name: Import the coredns_container role
+      become: true
+      import_role:
+        name: coredns
+
+# Doesn't do anything yet, won't work with NetworkManager
+#- name: Configure all devices to use client2 as dns server
+#  hosts: all
+#  tasks:
+#    - name: Import the resolv role
+#      become: true
+#      import_role:
+#        name: resolv

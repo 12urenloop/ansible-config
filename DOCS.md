@@ -30,3 +30,12 @@
 - Disable screensaver / display auto power off.
 
 Repeat steps 3 through 5 for the other client as well.
+
+## Ansible
+
+Connect both clients and your own device to the TELNET.
+
+```sh
+ansible-galaxy collection install -r requirements.yml
+ansible-playbook -kK playbook-1-clients-init.yml
+```

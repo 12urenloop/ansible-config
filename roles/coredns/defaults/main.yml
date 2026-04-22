@@ -1,5 +1,5 @@
 ---
-coredns_version: "1.11.1"
+coredns_version: "1.14.3"
 
 coredns_archs:
   x86_64:  amd64
