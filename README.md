@@ -6,9 +6,9 @@ Add the file `.vault-password`. Ask the password to the developers. You often fi
 
 Make sure to install `ansible` and check that you have the commands `ansible-playbook` and `ansible-galaxy` in your `PATH`.
 
-Install some external roles that we use
+Install some external collections that we use
 
-    ansible-galaxy install -r requirements.yml -p roles
+    ansible-galaxy collection install -r requirements.yml
 
 
 ## What can you find here?
