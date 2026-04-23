@@ -11,3 +11,13 @@
           - docker-compose
           - podman
           - podman-docker
+
+    - name: Enable podman socket
+      # become: true
+      ansible.builtin.systemd:
+        daemon_reload: true
+        name: "podman.socket"
+        enabled: true
+        state: started
+        scope: user
+      tags: ["services"]
