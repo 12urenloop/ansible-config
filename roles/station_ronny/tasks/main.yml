@@ -6,7 +6,7 @@
     install_recommends: false
     name:
       - postgresql
-  tags: ["db"]
+  tags: ["ronny_db"]
 
 - name: Ensure the postgresql service is enabled and started
   become: true
@@ -18,11 +18,11 @@
   until: 'postgresqlDetails.status.ActiveState == "active"'
   retries: 15
   delay: 2
-  tags: ["db"]
+  tags: ["ronny_db"]
 - name: Wait for postgres port to come up
   wait_for:
     port: 5432
-  tags: ["db"]
+  tags: ["ronny_db"]
 
 - name: 'Create the "{{ ronny_db_user }}" postgres user'
   become: true
@@ -31,14 +31,14 @@
     login_db: postgres
     name: "{{ ronny_db_user }}"
     password: "{{ ronny_db_password }}"
-  tags: ["db"]
+  tags: ["ronny_db"]
 - name: 'Create a new postgres database with name "{{ ronny_db }}"'
   become: true
   become_user: postgres
   community.postgresql.postgresql_db:
     name: "{{ ronny_db }}"
     owner: "{{ ronny_db_user }}"
-  tags: ["db"]
+  tags: ["ronny_db"]
 - name: 'Grant the "{{ ronny_db_user }} ALL privileges on the "{{ ronny_db }}" postgres database'
   become: true
   become_user: postgres
@@ -48,7 +48,7 @@
     type: "database"
     roles: "{{ ronny_db_user }}"
     obj: "{{ ronny_db }}"
-  tags: ["db"]
+  tags: ["ronny_db"]
 
 - name: Install golang through apt
   become: true
@@ -57,7 +57,7 @@
     install_recommends: false
     name:
       - golang
-  tags: ["db"]
+  tags: ["ronny_db"]
 
 - name: Checkout the ronny repository
   become: true
@@ -65,13 +65,13 @@
     repo: "https://github.com/12urenloop/Ronny-the-station-chef.git"
     dest: "/gonny/"
     version: "main"
-  tags: ["gonny"]
+  tags: ["ronny_build"]
 - name: Install go dependencies
   become: true
   ansible.builtin.command:
     cmd: go mod download
     chdir: /gonny/
-  tags: ["gonny"]
+  tags: ["ronny_build"]
 - name: Build gonny binaries
   become: true
   ansible.builtin.command:
@@ -80,7 +80,7 @@
   loop:
     - collector
     - spreader
-  tags: ["gonny"]
+  tags: ["ronny_build"]
 
 - name: Install systemd files
   become: true
@@ -93,7 +93,7 @@
   loop:
     - gonny-collector.service
     - gonny-spreader.service
-  tags: ["gonny"]
+  tags: ["ronny_build"]
 - name: Enable systemd services
   become: true
   ansible.builtin.systemd:
@@ -104,7 +104,7 @@
   loop:
     - gonny-collector
     - gonny-spreader
-  tags: ["gonny"]
+  tags: ["ronny_build"]
 
 - name: 'Deploy Prometheus exporter for the postgres "{{ ronny_db }}" database'
   vars:
