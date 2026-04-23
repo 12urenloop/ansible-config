@@ -1,0 +1,13 @@
+---
+- hosts: clients
+  tasks:
+    - name: Install apt packages
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        install_recommends: false
+        name:
+          - default-jdk-headless
+          - docker-compose
+          - podman
+          - podman-docker

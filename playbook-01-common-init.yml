@@ -1,37 +1,78 @@
 ---
-- hosts: clients
+- hosts: all
   tasks:
-    - name: Add the zeus user to the sudo group
+    - name: Set the hostname
+      become: true
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+    - name: Add a /etc/hosts entry for our hostname
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        insertafter: '^127\.0\.0\.1[ \t]+localhost'
+        line: "127.0.0.1\t{{ inventory_hostname }}"
+        owner: root
+        group: root
+        mode: '0644'
+        create: true
+
+    - name: Set timezone to Europe/Brussels
+      become: true
+      community.general.timezone:
+        name: "Europe/Brussels"
+
+    - name: Change the user and root password
       become: true
       ansible.builtin.user:
-        name: zeus
+        name: "{{ item }}"
+        password: "{{ 'zeusisdemax' | password_hash('sha512') }}"
+      loop:
+        - "{{ ansible_user }}"
+        - "root"
+
+    - name: Add the user to the sudo group
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
         groups: sudo
         append: true
+
+    - name: Allow users to use tcp/udp ports < 1024
+      become: true
+      ansible.posix.sysctl:
+        name: "net.ipv4.ip_unprivileged_port_start"
+        value: "1"
+
     - name: Install apt packages
       become: true
       ansible.builtin.apt:
+        update_cache: true
+        install_recommends: false
         name:
+          - acl
           - build-essential
           - curl
-          - default-jdk-headless
-          - docker-compose
+          - dnsutils
           - git
           - htop
           - iperf3
+          - libpq-dev
           - p7zip-full
-          - podman
-          - podman-docker
+          - pgcli
+          - postgresql-client
           - ranger
           - tmux
           - vim
           - vim-gui-common
-    - name: Allow users to use tcp/udp ports < 1024
-      ansible.posix.sysctl:
-        name: "net.ipv4.ip_unprivileged_port_start"
-        value: "1"
+
+    - name: Deploy Prometheus node exporter
+      import_role:
+        name: prometheus.prometheus.node_exporter # 0.0.0.0:9100
+      tags: ["exporter"]
+
     - name: Add defaults and aliases to .bashrc
       ansible.builtin.blockinfile:
-        path: /home/zeus/.bashrc
+        path: "{{ ansible_env.HOME }}/.bashrc"
         block: |
           export EDITOR=vim
           export PAGER=less
@@ -72,7 +113,7 @@
         create: true
     - name: Add defaults to .vimrc
       ansible.builtin.blockinfile:
-        path: /home/zeus/.vimrc
+        path: "{{ ansible_env.HOME }}/.vimrc"
         marker: '" {mark} ANSIBLE MANAGED BLOCK'
         block: |
           set nu

@@ -6,9 +6,9 @@ Add the file `.vault-password`. Ask the password to the developers. You often fi
 
 Make sure to install `ansible` and check that you have the commands `ansible-playbook` and `ansible-galaxy` in your `PATH`.
 
-Install some external collections that we use
+Install some external collections and roles that we use
 
-    ansible-galaxy collection install -r requirements.yml
+    ansible-galaxy install -r requirements.yml
 
 
 ## What can you find here?
@@ -37,3 +37,10 @@ On the clients
 Run a playbook. This will use the hosts specified in `hosts.ini`.
 
     ansible-playbook playbook.yml
+
+
+Running an ad-hoc command on a group of devices:
+
+```sh
+ansible -kK -i hosts.yml station -a 'sudo /sbin/shutdown -t 0'
+```

@@ -1,0 +1,97 @@
+---
+- name: Install postgresql apt package
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    install_recommends: false
+    name:
+      - postgresql
+  tags: ["db"]
+
+- name: Ensure the postgresql service is enabled and started
+  become: true
+  ansible.builtin.service:
+    name: postgresql
+    enabled: true
+    state: started
+  register: "postgresqlDetails"
+  until: 'postgresqlDetails.status.ActiveState == "active"'
+  retries: 15
+  delay: 2
+  tags: ["db"]
+- name: Wait for postgres port to come up
+  wait_for:
+    port: 5432
+  tags: ["db"]
+
+- name: 'Connect to the "postgres" database, create the "{{ ronny_db_user }}" user with access to all'
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    db: postgres
+    name: "{{ ronny_db_user }}"
+    password: "{{ ronny_db_password }}"
+    priv: "ALL"
+  tags: ["db"]
+- name: 'Create a new database with name "{{ ronny_db }}"'
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ ronny_db }}"
+    owner: "{{ ronny_db_user }}"
+  tags: ["db"]
+
+- name: Install golang
+  ansible.builtin.import_role:
+    name: gantsign.golang
+  tags: ["gonny"]
+
+- name: Checkout the ronny repository
+  ansible.builtin.git:
+    repo: "https://github.com/12urenloop/Ronny-the-station-chef.git"
+    dest: "/gonny/"
+    version: "main"
+  tags: ["gonny"]
+
+- name: Install go dependencies
+  ansible.builtin.command:
+    cmd: go mod download
+    chdir: /gonny/
+  tags: ["gonny"]
+- name: Build gonny binaries
+  ansible.builtin.command:
+    cmd: "env GOROOT={{ golang_install_dir }} GOPATH=/root {{ golang_install_dir }}/bin/go build -o cmds/{{ item }}/main cmds/{{ item }}/main.go"
+    chdir: /gonny/
+  loop:
+    - collector
+    - spreader
+  tags: ["gonny"]
+
+- name: Copy gonny systemd files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - gonny-collector.service
+    - gonny-spreader.service
+  tags: ["gonny"]
+- name: Enable systemd services
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: true
+    state: restarted
+  loop:
+    - gonny-collector
+    - gonny-spreader
+  tags: ["gonny"]
+
+- name: 'Deploy Prometheus exporter for the postgres "{{ ronny_db }}" database'
+  vars:
+    postgres_exporter_name: "postgresql://{{ ronny_db_user }}:{{ ronny_db_password }}@127.0.0.1/{{ ronny_db }}"
+  ansible.builtin.import_role:
+    name: prometheus.prometheus.postgres_exporter # 0.0.0.0:9187
+  tags: ["exporter"]

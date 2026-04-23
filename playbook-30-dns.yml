@@ -3,7 +3,7 @@
   hosts: client2
   tasks:
     - name: Import the dns_server role
-      import_role:
+      ansible.builtin.import_role:
         name: dns_server
 
 # Won't work with NetworkManager
@@ -12,5 +12,5 @@
 #  tasks:
 #    - name: Import the dns_client role
 #      become: true
-#      import_role:
+#      ansible.builtin.import_role:
 #        name: dns_client
