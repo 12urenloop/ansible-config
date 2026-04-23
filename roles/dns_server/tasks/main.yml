@@ -1,0 +1,14 @@
+---
+- name: Process and install template files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ dns_server_path }}/{{ item.src }}"
+  loop:
+    - src: docker-compose.yml
+    - src: config/Corefile
+    - src: config/lan.zone.j2
+
+- name: Run docker compose up -d
+  ansible.builtin.cmd:
+    chdir: "{{ dns_server_path }}"
+    cmd: "docker compose up -d"

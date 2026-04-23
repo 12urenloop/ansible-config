@@ -1,0 +1,4 @@
+---
+dns_server_path: "/home/zeus/dns_server"
+coredns_version: "1.14.3"
+coredns_image: "docker.io/coredns/coredns:{{ coredns_version }}"

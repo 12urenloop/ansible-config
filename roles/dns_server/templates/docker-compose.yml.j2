@@ -1,0 +1,11 @@
+# https://selfhosting.sh/apps/coredns/
+services:
+  coredns:
+    image: "{{ coredns_image }}"
+    restart: unless-stopped
+    working_dir: /config/
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - ./config/:/config/:ro

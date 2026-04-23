@@ -25,6 +25,10 @@
           - tmux
           - vim
           - vim-gui-common
+    - name: Allow users to use tcp/udp ports < 1024
+      ansible.posix.sysctl:
+        name: "net.ipv4.ip_unprivileged_port_start"
+        value: "1"
     - name: Add defaults and aliases to .bashrc
       ansible.builtin.blockinfile:
         path: /home/zeus/.bashrc
