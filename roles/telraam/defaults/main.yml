@@ -1,0 +1,8 @@
+---
+telraam_user: "{{ ansible_user }}"
+telraam_repo: "https://github.com/12urenloop/Telraam.git"
+telraam_version: "master"
+telraam_clone_path: "{{ ansible_env.HOME }}/telraam"
+telraam_db: "telraam_dev"
+telraam_db_user: "telraam_user"
+telraam_db_password: "iAMs00perSecrEET"

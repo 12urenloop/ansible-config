@@ -1,0 +1,6 @@
+---
+- hosts: client1
+  tasks:
+    - name: Import the telraam role
+      ansible.builtin.import_role:
+        name: telraam

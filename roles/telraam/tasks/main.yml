@@ -1,0 +1,41 @@
+---
+- name: Checkout the Telraam repository
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.git:
+    repo: "{{ telraam_repo }}"
+    dest: "{{ telraam_clone_path }}"
+    version: "{{ telraam_version }}"
+  tags: ["telraam_db"]
+
+- name: Create the .env file
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.template:
+    src: "env.j2"
+    dest: "{{ telraam_clone_path }}/.env"
+  tags: ["telraam_config", "telraam_db"]
+
+- name: 'Start the database with "docker compose up -d db"'
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.command:
+    chdir: "{{ telraam_clone_path }}"
+    cmd: "docker compose up -d db"
+  tags: ["telraam_config", "telraam_db"]
+
+- name: 'Run gradle "build" task'
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.command:
+    chdir: "{{ telraam_clone_path }}"
+    cmd: "./gradlew build"
+  tags: ["telraam_build"]
+
+- name: 'Run gradle "migrateDevelopmentDatabase" task'
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.command:
+    chdir: "{{ telraam_clone_path }}"
+    cmd: "./gradlew migrateDevelopmentDatabase"
+  tags: ["telraam_db"]

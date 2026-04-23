@@ -9,6 +9,6 @@
     - src: config/lan.zone
 
 - name: Run docker compose up -d
-  ansible.builtin.cmd:
+  ansible.builtin.command:
     chdir: "{{ dns_server_path }}"
     cmd: "docker compose up -d"

@@ -9,11 +9,12 @@
         name:
           - default-jdk-headless
           - docker-compose
+          - passt
           - podman
           - podman-docker
+          - uidmap
 
-    - name: Enable podman socket
-      # become: true
+    - name: Enable user podman socket
       ansible.builtin.systemd:
         daemon_reload: true
         name: "podman.socket"
