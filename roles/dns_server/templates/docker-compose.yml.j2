@@ -1,7 +1,7 @@
 # https://selfhosting.sh/apps/coredns/
 services:
   coredns:
-    image: "{{ coredns_image }}"
+    image: "{{ dns_server_coredns_image }}"
     restart: unless-stopped
     working_dir: /config/
     ports:

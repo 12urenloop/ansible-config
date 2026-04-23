@@ -1,4 +1,5 @@
 ---
-dns_server_path: "/home/zeus/dns_server"
-coredns_version: "1.14.3"
-coredns_image: "docker.io/coredns/coredns:{{ coredns_version }}"
+dns_server_user: "{{ ansible_user }}"
+dns_server_path: "{{ ansible_env.HOME }}/dns_server"
+dns_server_coredns_version: "1.14.3"
+dns_server_coredns_image: "docker.io/coredns/coredns:{{ dns_server_coredns_version }}"

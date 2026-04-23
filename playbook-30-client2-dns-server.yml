@@ -1,5 +1,5 @@
 ---
-- name: Install the coredns container on client2
+- name: Install the dns server container on client2
   hosts: client2
   tasks:
     - name: Import the dns_server role
