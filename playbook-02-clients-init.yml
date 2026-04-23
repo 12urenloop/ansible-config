@@ -22,3 +22,7 @@
         state: started
         scope: user
       tags: ["services"]
+
+    - name: Import the dbeaver role
+      ansible.builtin.import_role:
+        name: dbeaver

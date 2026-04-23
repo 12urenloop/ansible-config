@@ -1,0 +1,9 @@
+---
+- name: Install DBeaver
+  become: true
+  ansible.builtin.shell:
+    cmd: |
+      wget -q -O - https://dbeaver.io/debs/dbeaver.gpg.key | gpg --dearmor -o /usr/share/keyrings/dbeaver.gpg.key
+      echo "deb [signed-by=/usr/share/keyrings/dbeaver.gpg.key] https://dbeaver.io/debs/dbeaver-ce /" | tee /etc/apt/sources.list.d/dbeaver.list
+      apt-get update
+      apt-get install dbeaver-ce
