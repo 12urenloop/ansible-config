@@ -1,0 +1,6 @@
+---
+uwb_user: "{{ ansible_user }}"
+uwb_repo: "https://github.com/12urenloop/Lapocalypse3000.git"
+uwb_version: "uwbmeshclock"
+uwb_clone_path: "{{ ansible_env.HOME }}/uwb"
+uwb_broker_uri: "amqp://uwb:uwb@172.12.50.30:5672"

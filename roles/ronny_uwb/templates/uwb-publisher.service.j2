@@ -1,0 +1,15 @@
+[Unit]
+Description=UWB Publisher
+Requires=network.target
+Requires=time-sync.target
+After=network.target
+After=ntpd.service
+
+[Service]
+Type=simple
+Restart=always
+User={{ uwb_user }}
+ExecStart=sh -c 'export BUN_INSTALL="$HOME/.bun" && export PATH="$BUN_INSTALL/bin:$PATH" && {{ uwb_clone_path }}/code/aggregation/publisher-bun/deploy.sh'
+
+[Install]
+WantedBy=multi-user.target

@@ -82,7 +82,7 @@
     - spreader
   tags: ["gonny"]
 
-- name: Copy gonny systemd files
+- name: Install systemd files
   become: true
   ansible.builtin.template:
     src: "{{ item }}.j2"

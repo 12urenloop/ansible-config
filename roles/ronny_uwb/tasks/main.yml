@@ -1,0 +1,54 @@
+---
+- name: Check if bun exists
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.bun/bin/bun"
+  register: bun
+
+- name: Install Bun
+  become: true
+  ansible.builtin.shell:
+    cmd: "curl -fsSL https://bun.com/install | bash"
+  when: not bun.stat.exists
+  tags: ["uwb_install"]
+
+- name: Checkout the uwb repository
+  become: true
+  become_user: "{{ uwb_user }}"
+  ansible.builtin.git:
+    repo: "{{ uwb_repo }}"
+    dest: "{{ uwb_clone_path }}"
+    version: "{{ uwb_version }}"
+    recursive: false
+    force: true
+  tags: ["uwb_install"]
+
+- name: Install systemd files
+  become: true
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - uwb-publisher.service
+  tags: ["uwb_install"]
+
+- name: Create .env file
+  become: true
+  become_user: "{{ uwb_user }}"
+  ansible.builtin.template:
+    src: "publisher.env.j2"
+    dest: "{{ uwb_clone_path }}/code/aggregation/publisher-bun/.env"
+  tags: ["uwb_config"]
+
+- name: Enable systemd services
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: true
+    state: restarted
+  loop:
+    - uwb-publisher
+  tags: ["uwb_install", "uwb_config"]

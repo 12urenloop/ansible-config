@@ -62,8 +62,10 @@
           - postgresql-client
           - ranger
           - tmux
+          - unzip
           - vim
           - vim-gui-common
+          - zip
 
     - name: Deploy Prometheus node exporter
       import_role:
