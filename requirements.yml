@@ -3,5 +3,4 @@ collections:
   - name: ansible.posix
   - name: community.postgresql
   - name: prometheus.prometheus
-roles:
-  - name: gantsign.golang
+roles: []

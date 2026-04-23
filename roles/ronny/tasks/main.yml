@@ -1,5 +1,5 @@
 ---
-- name: Install postgresql apt package
+- name: Install postgresql through apt
   become: true
   ansible.builtin.apt:
     update_cache: true
@@ -24,27 +24,40 @@
     port: 5432
   tags: ["db"]
 
-- name: 'Connect to the "postgres" database, create the "{{ ronny_db_user }}" user with access to all'
+- name: 'Create the "{{ ronny_db_user }}" postgres user'
   become: true
   become_user: postgres
   community.postgresql.postgresql_user:
-    db: postgres
+    login_db: postgres
     name: "{{ ronny_db_user }}"
     password: "{{ ronny_db_password }}"
-    priv: "ALL"
   tags: ["db"]
-- name: 'Create a new database with name "{{ ronny_db }}"'
+- name: 'Create a new postgres database with name "{{ ronny_db }}"'
   become: true
   become_user: postgres
   community.postgresql.postgresql_db:
     name: "{{ ronny_db }}"
     owner: "{{ ronny_db_user }}"
   tags: ["db"]
+- name: 'Grant the "{{ ronny_db_user }} ALL privileges on the "{{ ronny_db }}" postgres database'
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    login_db: "postgres"
+    privs: "ALL"
+    type: "database"
+    roles: "{{ ronny_db_user }}"
+    obj: "{{ ronny_db }}"
+  tags: ["db"]
 
-- name: Install golang
-  ansible.builtin.import_role:
-    name: gantsign.golang
-  tags: ["gonny"]
+- name: Install golang through apt
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    install_recommends: false
+    name:
+      - golang
+  tags: ["db"]
 
 - name: Checkout the ronny repository
   ansible.builtin.git:
@@ -52,7 +65,6 @@
     dest: "/gonny/"
     version: "main"
   tags: ["gonny"]
-
 - name: Install go dependencies
   ansible.builtin.command:
     cmd: go mod download
