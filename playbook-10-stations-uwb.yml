@@ -3,4 +3,4 @@
   tasks:
     - name: Import the ronny_uwb role
       ansible.builtin.import_role:
-        name: ronny_uwb
+        name: station_uwb
