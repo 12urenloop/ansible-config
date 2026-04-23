@@ -1,0 +1,6 @@
+---
+- hosts: stations
+  tasks:
+    - name: Import the station_ronny role
+      ansible.builtin.import_role:
+        name: station_ronny
