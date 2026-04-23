@@ -60,19 +60,22 @@
   tags: ["db"]
 
 - name: Checkout the ronny repository
+  become: true
   ansible.builtin.git:
     repo: "https://github.com/12urenloop/Ronny-the-station-chef.git"
     dest: "/gonny/"
     version: "main"
   tags: ["gonny"]
 - name: Install go dependencies
+  become: true
   ansible.builtin.command:
     cmd: go mod download
     chdir: /gonny/
   tags: ["gonny"]
 - name: Build gonny binaries
+  become: true
   ansible.builtin.command:
-    cmd: "env GOROOT={{ golang_install_dir }} GOPATH=/root {{ golang_install_dir }}/bin/go build -o cmds/{{ item }}/main cmds/{{ item }}/main.go"
+    cmd: "env go build -o cmds/{{ item }}/main cmds/{{ item }}/main.go"
     chdir: /gonny/
   loop:
     - collector
@@ -80,8 +83,9 @@
   tags: ["gonny"]
 
 - name: Copy gonny systemd files
-  ansible.builtin.copy:
-    src: "{{ item }}"
+  become: true
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
     dest: "/etc/systemd/system/{{ item }}"
     owner: root
     group: root
@@ -91,6 +95,7 @@
     - gonny-spreader.service
   tags: ["gonny"]
 - name: Enable systemd services
+  become: true
   ansible.builtin.systemd:
     daemon_reload: true
     name: "{{ item }}"

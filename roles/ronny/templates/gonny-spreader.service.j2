@@ -11,6 +11,9 @@ Restart=always
 User=root
 ExecStart=/gonny/cmds/spreader/main
 Environment="LOG_LEVEL=warning"
+Environment="DATABASE_USER={{ ronny_db_user }}"
+Environment="DATABASE_PASSWORD={{ ronny_db_password }}"
+Environment="DATABASE_DB={{ ronny_db }}"
 
 [Install]
 WantedBy=multi-user.target
