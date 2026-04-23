@@ -4,12 +4,18 @@ Add the file `.vault-password`. Ask the password to the developers. You often fi
 
 ## Prepare
 
-Make sure to install `ansible` and check that you have the commands `ansible-playbook` and `ansible-galaxy` in your `PATH`.
+Install any version of `uv`.
 
-Install some external collections and roles that we use
+In this repository, run:
 
-    ansible-galaxy install -r requirements.yml
+```sh
+uv venv --python=python3.14 --seed
+source .venv/bin/activate
+pip install -r requirements.txt
+ansible-galaxy install -r requirements.yml
+```
 
+As long as you use `source .venv/bin/activate` first, you should now have the `ansible` command.
 
 ## What can you find here?
 
