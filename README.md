@@ -9,9 +9,9 @@ Install any version of `uv`.
 In this repository, run:
 
 ```sh
-uv venv --python=python3.14 --seed
+uv venv --python=python3.14
 source .venv/bin/activate
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ansible-galaxy install -r requirements.yml
 ```
 
