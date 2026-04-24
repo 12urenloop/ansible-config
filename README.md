@@ -1,6 +1,5 @@
 # ansible config
 
-Add the file `.vault-password`. Ask the password to the developers. You often find them on the [mattermost instance](https://mattermost.zeus.gent/) of ZeusWPI.
 
 ## Prepare
 
