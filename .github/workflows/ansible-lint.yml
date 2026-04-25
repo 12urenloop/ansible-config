@@ -1,0 +1,12 @@
+name: ansible-lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ansible/ansible-lint@26
