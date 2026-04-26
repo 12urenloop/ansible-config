@@ -71,10 +71,22 @@ Flash the ronnys and set a password as described in [Preparing a ronny for ansib
 
 ## Prepare
 
-```sh
+Make sure `uv` is installed:
+
+```console
 command -v uv || (curl -LsSf https://astral.sh/uv/install.sh | sh)
+```
+
+Create a `.venv`:
+
+```console
 uv venv --python=python3.14
 source .venv/bin/activate
+```
+
+Install dependencies:
+
+```console
 uv pip install -r requirements.txt
 ansible-galaxy install -r requirements.yml
 ```
