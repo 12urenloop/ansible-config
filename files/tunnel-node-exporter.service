@@ -1,5 +1,5 @@
 [Unit]
-Description=Setup a remote tunnel to Asimov
+Description=Forward the Prometheus node exporter port from Asimov to localhost
 After=network.target
 
 [Service]

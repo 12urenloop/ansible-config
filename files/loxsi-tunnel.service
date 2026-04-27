@@ -1,5 +1,5 @@
 [Unit]
-Description=Setup a remote tunnel to Asimov
+Description=Forward the telraam api port to Asimov for Loxsi
 After=network.target
 
 [Service]
