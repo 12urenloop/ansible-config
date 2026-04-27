@@ -1,0 +1,16 @@
+---
+- hosts: client1
+  tasks:
+    - name: Install loxsi-tunnel.service
+      ansible.builtin.copy:
+        src: "loxsi-tunnel.service"
+        dest: "{{ ansible_env.HOME }}/.config/systemd/user/loxsi-tunnel.service"
+      tags: ["services"]
+    - name: Enable loxsi-tunnel.service
+      ansible.builtin.systemd:
+        daemon_reload: true
+        name: "loxsi-tunnel.service"
+        enabled: true
+        state: restarted
+        scope: user
+      tags: ["services"]
