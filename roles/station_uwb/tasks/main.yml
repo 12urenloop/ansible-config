@@ -6,7 +6,6 @@
   tags: ["uwb_install"]
 
 - name: Install Bun
-  become: true
   ansible.builtin.shell:
     cmd: "curl -fsSL https://bun.com/install | bash"
   when: not bun.stat.exists
