@@ -3,7 +3,7 @@ Description=Gonny Collector, collects detections into a database
 Requires=network.target
 Requires=time-sync.target
 After=network.target
-After=ntpd.service
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple

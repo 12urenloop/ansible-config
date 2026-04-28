@@ -1,13 +1,13 @@
 [Unit]
 Description=Forward the telraam api port to Asimov for Loxsi
 After=network.target
+StartLimitIntervalSec=0
 
 [Service]
 ExecStart=/usr/bin/ssh -vv -o ServerAliveInterval=60 -o ExitOnForwardFailure=yes -nNT -R 127.0.0.1:8001:127.0.0.1:8080 loxsi@asimov.ugent.be -p 2222
 RestartSec=15
 Restart=always
 KillMode=mixed
-StartLimitIntervalSec=0
 
 [Install]
 WantedBy=multi-user.target
