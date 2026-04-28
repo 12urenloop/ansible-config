@@ -1,0 +1,9 @@
+---
+- hosts: client2
+  tasks:
+    - name: Import the telraam role with replica variables
+      ansible.builtin.import_role:
+        name: telraam
+      vars:
+        telraam_replica: true
+        telraam_replica_upstream_host: "{{ hostvars['client1']['ansible_host'] }}"

@@ -1,0 +1,13 @@
+[Unit]
+Description=replicate-dumps.sh
+After=network.target
+
+[Service]
+ExecStart=/bin/sh telraam/replicate-dumps.sh {{ telraam_user }}@{{ telraam_replica_upstream_host }}
+RestartSec=15
+Restart=always
+KillMode=mixed
+StartLimitIntervalSec=0
+
+[Install]
+WantedBy=multi-user.target

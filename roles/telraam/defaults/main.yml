@@ -6,3 +6,5 @@ telraam_clone_path: "{{ ansible_env.HOME }}/telraam"
 telraam_db: "telraam_dev"
 telraam_db_user: "telraam_user"
 telraam_db_password: "iAMs00perSecrEET"
+telraam_replica: false
+telraam_replica_upstream_host: ""

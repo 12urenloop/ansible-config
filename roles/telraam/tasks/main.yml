@@ -6,6 +6,7 @@
     repo: "{{ telraam_repo }}"
     dest: "{{ telraam_clone_path }}"
     version: "{{ telraam_version }}"
+    update: false
   tags: ["telraam_db"]
 
 - name: Create the .env file
@@ -16,26 +17,89 @@
     dest: "{{ telraam_clone_path }}/.env"
   tags: ["telraam_config", "telraam_db"]
 
-- name: 'Start the database with "docker compose up -d db"'
+- name: Configure Postgres as primary through postgresql.conf
+  when: "not telraam_replica"
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.blockinfile:
+    path: "{{ telraam_clone_path }}/postgresql.conf"
+    block: |
+      wal_level = replica
+      max_wal_senders = 3
+      wal_keep_size = 1GB
+  tags: ["telraam_db"]
+
+- name: Configure Postgres as replica through postgresql.conf
+  when: "telraam_replica"
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.blockinfile:
+    path: "{{ telraam_clone_path }}/postgresql.conf"
+    block: |
+      primary_conninfo = 'postgresql://{{ telraam_db_user }}:{{ telraam_db_password }}@{{ telraam_replica_upstream_host }}/{{ telraam_db }}'
+  tags: ["telraam_db"]
+
+- name: Init the replica database by taking a backup (requires ssh-copy-id)
+  when: "telraam_replica"
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.shell:
+    chdir: "{{ telraam_clone_path }}"
+    cmd: |
+      if ! [ -d data/db ]; then
+        mkdir -p data/db
+        rsync -rvP {{ telraam_user }}@{{ telraam_replica_upstream_host }}:{{ telraam_clone_path }}/data/db_init/ ./data/db/
+      fi
+  tags: ["telraam_db"]
+
+- name: Touch standby.signal for replica database
+  when: "telraam_replica"
   become: true
   become_user: "{{ telraam_user }}"
   ansible.builtin.command:
     chdir: "{{ telraam_clone_path }}"
-    cmd: "docker compose up -d db"
+    cmd: touch data/db/standby.signal
+  tags: ["telraam_db"]
+
+- name: 'Start the database with "podman compose up -d db"'
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.shell:
+    chdir: "{{ telraam_clone_path }}"
+    cmd: |
+      mkdir -p data/db
+      podman compose up -d db
   tags: ["telraam_config", "telraam_db"]
 
 - name: 'Run gradle "build" task'
   become: true
   become_user: "{{ telraam_user }}"
+  when: "not telraam_replica"
   ansible.builtin.command:
     chdir: "{{ telraam_clone_path }}"
     cmd: "./gradlew build"
   tags: ["telraam_build"]
 
 - name: 'Run gradle "migrateDevelopmentDatabase" task'
+  when: "not telraam_replica"
   become: true
   become_user: "{{ telraam_user }}"
   ansible.builtin.command:
     chdir: "{{ telraam_clone_path }}"
     cmd: "./gradlew migrateDevelopmentDatabase"
+  tags: ["telraam_db"]
+
+- name: 'Take a backup for replicas'
+  when: "not telraam_replica"
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.shell:
+    chdir: "{{ telraam_clone_path }}"
+    cmd: |
+      if ! [ -d data/db_init ]; then
+        podman compose stop db
+        podman unshare cp -r data/db data/db_init
+        podman compose start db
+      fi
+
   tags: ["telraam_db"]
