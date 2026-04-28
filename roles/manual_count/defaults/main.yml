@@ -1,0 +1,6 @@
+---
+manual_count_user: "{{ ansible_user }}"
+manual_count_repo: "https://github.com/12urenloop/manual-count-2.git"
+manual_count_version: "master"
+manual_count_clone_path: "{{ ansible_env.HOME }}/manual-count-2"
+manual_count_telraam_host_port: "{{ hostvars['client1']['ansible_host'] }}:8080"

@@ -1,0 +1,52 @@
+---
+- name: Install node and npm via apt
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    install_recommends: false
+    name:
+      - nodejs
+      - npm
+
+- name: Install pnpm through npm
+  become: true
+  ansible.builtin.shell:
+    cmd: npm install -g pnpm@10.33.2
+
+- name: Checkout the manual-count-2 repository
+  become: true
+  become_user: "{{ manual_count_user }}"
+  ansible.builtin.git:
+    repo: "{{ manual_count_repo }}"
+    dest: "{{ manual_count_clone_path }}"
+    version: "{{ manual_count_version }}"
+    update: false
+  tags: ["manual_count"]
+
+- name: Install .env from template
+  become: true
+  become_user: "{{ manual_count_user }}"
+  ansible.builtin.template:
+    src: "env.j2"
+    dest: "{{ manual_count_clone_path }}/.env"
+  tags: ["manual_count"]
+
+- name: Run pnpm i
+  become: true
+  become_user: "{{ manual_count_user }}"
+  ansible.builtin.shell:
+    chdir: "{{ manual_count_clone_path }}"
+    cmd: |
+      set -eu
+      pnpm i
+      pnpm approve-builds --all
+  tags: ["manual_count"]
+
+- name: Copy the start script
+  become: true
+  become_user: "{{ manual_count_user }}"
+  ansible.builtin.copy:
+    src: "start.sh"
+    dest: "{{ manual_count_clone_path }}/start.sh"
+    mode: "755"
+  tags: ["manual_count"]

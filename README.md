@@ -44,3 +44,4 @@ ansible -kK -i hosts.yml station -a 'sudo /sbin/shutdown -t 0'
 
 - Have telraam take db config through env vars
 - Generate ssh keys on client 1 & 2, place them in each other and the pi's `authorized_keys`
+- Manual count needs to have `host: [client 2 ip]` set in frontend vite config
