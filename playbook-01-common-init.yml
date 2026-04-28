@@ -126,3 +126,10 @@
           command W w !sudo tee %
         state: present
         create: true
+    - name: Add defaults to .tmux.conf
+      ansible.builtin.blockinfile:
+        path: "{{ ansible_env.HOME }}/.tmux.conf"
+        block: |
+          setw -g mouse on
+        state: present
+        create: true
