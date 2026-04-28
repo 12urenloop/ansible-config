@@ -1,5 +1,0 @@
----
-resolv_domain: lan
-resolv_nameserver:
-  - 172.12.50.22
-  - 172.12.50.1

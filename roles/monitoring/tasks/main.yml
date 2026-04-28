@@ -1,12 +1,19 @@
 ---
 - name: Checkout the monitoring repository
   ansible.builtin.git:
-    repo: "https://github.com/12urenloop/monitoring.git"
-    dest: "/home/zeus/monitoring"
-    version: "trunk"
+    repo: "{{ monitoring_repo }}"
+    dest: "{{ monitoring_clone_path }}"
+    version: "{{ monitoring_version }}"
+  tags: ["monitoring"]
+
+- name: Install prod.env from template
+  ansible.builtin.template:
+    src: "prod.env.j2"
+    dest: "{{ monitoring_clone_path }}/prod.env"
   tags: ["monitoring"]
 
 - name: Execute startup script
   ansible.builtin.command:
     chdir: "/home/zeus/monitoring"
-    cmd: "bash start.sh config_prod.env"
+    cmd: "bash start.sh prod.env"
+  tags: ["monitoring"]

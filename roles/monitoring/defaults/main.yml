@@ -1,0 +1,9 @@
+---
+monitoring_user: "{{ ansible_user }}"
+monitoring_repo: "https://github.com/12urenloop/monitoring.git"
+monitoring_version: "trunk"
+monitoring_clone_path: "{{ ansible_env.HOME }}/monitoring"
+monitoring_telraam_db: "telraam_dev"
+monitoring_telraam_db_user: "telraam_user"
+monitoring_telraam_db_password: "iAMs00perSecrEET"
+monitoring_master_password: "veranderditmaar"

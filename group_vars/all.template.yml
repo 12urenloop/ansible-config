@@ -1,0 +1,4 @@
+telraam_db_password: "iAMs00perSecrEET"
+monitoring_telraam_db_password: "{{ telraam_db_password }}"
+
+monitoring_master_password: "veranderditmaar"

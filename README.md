@@ -42,4 +42,5 @@ ansible -kK -i hosts.yml station -a 'sudo /sbin/shutdown -t 0'
 
 ## TODO
 
+- Have telraam take db config through env vars
 - Generate ssh keys on client 1 & 2, place them in each other and the pi's `authorized_keys`

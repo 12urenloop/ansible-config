@@ -1,0 +1,6 @@
+---
+- hosts: client2
+  tasks:
+    - name: Import the monitoring role
+      ansible.builtin.import_role:
+        name: monitoring
