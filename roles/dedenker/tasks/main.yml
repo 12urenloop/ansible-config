@@ -1,0 +1,21 @@
+---
+- name: Create dedenker_path
+  become: true
+  become_user: "{{ dedenker_user }}"
+  ansible.builtin.file:
+    path: "{{ dedenker_path }}"
+    state: directory
+
+- name: Install docker-compose.yml from template
+  become: true
+  become_user: "{{ dedenker_user }}"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ dedenker_path }}/docker-compose.yml"
+
+- name: Run podman compose up -d
+  become: true
+  become_user: "{{ dedenker_user }}"
+  ansible.builtin.command:
+    chdir: "{{ dedenker_path }}"
+    cmd: "podman compose up -d"

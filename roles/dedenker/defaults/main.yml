@@ -1,0 +1,5 @@
+---
+dedenker_user: "{{ ansible_user }}"
+dedenker_path: "{{ ansible_env.HOME }}/dedenker"
+dedenker_telraam_url: "http://host.docker.internal:8080"
+dedenker_image: "ghcr.io/12urenloop/dedenker:latest"
