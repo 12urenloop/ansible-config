@@ -103,3 +103,10 @@
       fi
 
   tags: ["telraam_db"]
+
+- name: 'Deploy Prometheus exporter for the postgres "{{ telraam_db }}" database'
+  vars:
+    postgres_exporter_name: "postgresql://{{ telraam_db_user }}:{{ telraam_db_password }}@127.0.0.1/{{ telraam_db }}?sslmode=disable"
+  ansible.builtin.import_role:
+    name: prometheus.prometheus.postgres_exporter # 0.0.0.0:9187
+  tags: ["exporter"]

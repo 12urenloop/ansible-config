@@ -109,7 +109,7 @@
 
 - name: 'Deploy Prometheus exporter for the postgres "{{ ronny_db }}" database'
   vars:
-    postgres_exporter_name: "postgresql://{{ ronny_db_user }}:{{ ronny_db_password }}@127.0.0.1/{{ ronny_db }}"
+    postgres_exporter_name: "postgresql://{{ ronny_db_user }}:{{ ronny_db_password }}@127.0.0.1/{{ ronny_db }}?sslmode=disable"
   ansible.builtin.import_role:
     name: prometheus.prometheus.postgres_exporter # 0.0.0.0:9187
   tags: ["exporter"]
