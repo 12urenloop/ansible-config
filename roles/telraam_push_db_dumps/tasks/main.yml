@@ -1,0 +1,19 @@
+---
+- name: Install telraam_push_db_dumps.sh
+  become: true
+  become_user: "{{ telraam_user }}"
+  ansible.builtin.template:
+    src: "telraam_push_db_dumps.sh.j2"
+    dest: "{{ telraam_clone_path }}/telraam_push_db_dumps.sh"
+    mode: "755"
+- name: Install telraam_push_db_dumps.service
+  ansible.builtin.template:
+    src: "telraam_push_db_dumps.service.j2"
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/telraam_push_db_dumps.service"
+- name: Enable telraam_push_db_dumps.service
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "telraam_push_db_dumps.service"
+    enabled: true
+    state: restarted
+    scope: user

@@ -1,0 +1,13 @@
+[Unit]
+Description=Run telraam_push_db_dumps.sh
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart={{ telraam_clone_path }}/telraam_push_db_dumps.sh
+RestartSec=15
+Restart=always
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

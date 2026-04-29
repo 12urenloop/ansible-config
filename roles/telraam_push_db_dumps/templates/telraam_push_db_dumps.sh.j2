@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Generated from the ansible-config
+set -euo pipefail
+cd "$(dirname "$0")"
+
+. ./.env
+
+while true; do
+	filename="/tmp/__telraam_dump_$(date +%FT%T).sql.gz"
+
+	echo "Dumping telraam..."
+	podman compose exec db pg_dump -U "$TELRAAM_DB_USER" "$TELRAAM_DB" --inserts --rows-per-insert=2000 -Ft | gzip > "${filename}"
+
+	echo "Copying dump at ${filename} to {{ telraam_push_db_dumps_rsync_dest }}"
+	rsync -vP --mkpath "${filename}" "{{ telraam_push_db_dumps_rsync_dest }}"
+
+	echo "Removing local dump..."
+	rm -f "${filename}"
+
+	echo "Done"
+	echo ""
+	sleep 300
+done

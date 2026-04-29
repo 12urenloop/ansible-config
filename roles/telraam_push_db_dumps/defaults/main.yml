@@ -1,0 +1,4 @@
+---
+telraam_user: "{{ ansible_user }}"
+telraam_clone_path: "{{ ansible_env.HOME }}/telraam"
+telraam_push_db_dumps_rsync_dest: "{{ telraam_user }}@{{ hostvars['client2']['ansible_host'] }}:telraam_dumps/"
